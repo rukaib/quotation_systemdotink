@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quotation - DOT INK</title>
+    <style>
+        /* --- BRAND COLORS --- */
+        :root {
+            --dot-cyan: #00B0F0;   /* Brand Cyan */
+            --dot-blue: #0070C0;   /* Brand Blue */
+            --dot-dark: #333333;   /* Text Color */
+            --dot-border: #000000; /* Black Borders */
+        }
+
+        /* --- PRINT FIXES --- */
+        * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        body {
+            font-family: 'Cambria', 'Segoe UI', Arial, sans-serif;
+            font-size: 12px;
+            color: var(--dot-dark);
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        /* --- PAGE SETUP (A4) --- */
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 15mm;
+            margin: 10mm auto;
+            background: white;
+            position: relative;
+            box-sizing: border-box;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        /* --- DECORATIVE CORNER --- */
+        .corner-shape {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 150px;
+            height: 100px;
+            background: linear-gradient(135deg, transparent 50%, #87CEEB 50%, #87CEEB 70%, #778899 70%);
+            z-index: 1;
+        }
+
+        /* --- HEADER SECTION --- */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 10;
+            border-bottom: 3px solid var(--dot-cyan);
+            padding-bottom: 10px;
+        }
+        .logo-img {
+            width: 400px;
+            
+            
+        }
+        .company-details {
+            text-align: right;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+        .company-details .company-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--dot-blue);
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        /* --- QUOTATION TITLE --- */
+        .quote-title-bar {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .quote-title-bar h1 {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--dot-dark);
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .quote-title-bar span {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* --- INFO GRID (Customer Details) --- */
+        .info-grid {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+        }
+        .info-grid td {
+            padding: 5px 8px;
+            vertical-align: top;
+            border-bottom: 1px solid #eee;
+        }
+        .info-grid tr:last-child td { border-bottom: none; }
+        .label { font-weight: bold; width: 100px; color: #555; }
+        .colon { width: 10px; text-align: center; }
+        .value { font-weight: normal; color: #000; }
+
+        /* --- ITEMS TABLE --- */
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            border: 1.5px solid var(--dot-border);
+        }
+        .items-table th {
+            background-color: var(--dot-cyan);
+            color: white;
+            border: 1px solid var(--dot-border);
+            padding: 6px;
+            text-align: center;
+            text-transform: uppercase;
+            font-size: 11px;
+        }
+        .items-table td {
+            border: 1px solid var(--dot-border);
+            padding: 6px;
+            font-size: 12px;
+            vertical-align: top;
+        }
+        .spec-list { margin: 0; padding-left: 15px; font-size: 11px; }
+        .spec-list li { margin-bottom: 2px; }
+        .win-genuine { color: red; font-weight: bold; display: block; margin-top: 3px; }
+
+        /* --- TOTALS SECTION --- */
+        .totals-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            margin-bottom: 30px;
+        }
+        .in-words {
+            width: 60%;
+            font-style: italic;
+            padding: 10px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+        }
+        .amounts-table { width: 38%; border-collapse: collapse; }
+        .amounts-table td { padding: 4px 8px; }
+        .amounts-table tr.grand-total td {
+            border-top: 2px solid #000;
+            border-bottom: 2px solid #000;
+            font-weight: bold;
+            font-size: 14px;
+            padding: 8px;
+        }
+        .text-right { text-align: right; }
+
+        /* --- NEW: Terms Summary Table --- */
+        .terms-summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 11px;
+        }
+        .terms-summary-table th, .terms-summary-table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .terms-summary-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        /* --- SPECIAL NOTE BOX --- */
+        .special-note { border: 1.5px solid var(--dot-cyan); margin-bottom: 20px; }
+        .special-note-header {
+            background-color: var(--dot-cyan);
+            color: white;
+            text-align: center;
+            font-weight: bold;
+            padding: 5px;
+            text-transform: uppercase;
+        }
+        .special-note-body { padding: 10px; font-size: 11px; }
+        .special-note-body div { margin-bottom: 3px; }
+        .highlight-yellow { background-color: yellow; padding: 0 3px; font-weight: bold; }
+
+        /* --- FOOTER & SIGNATURES --- */
+        .footer-info { margin-bottom: 40px; font-size: 11px; }
+        .signature-grid {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .sig-box {
+            width: 45%;
+            border-top: 1px dotted #000;
+            padding-top: 5px;
+            font-size: 10px;
+        }
+        .copyright-footer {
+            text-align: center;
+            font-size: 9px;
+            color: #777;
+            margin-top: 25px;
+            border-top: 1px solid #eee;
+            padding-top: 5px;
+        }
+
+        @media print {
+            body { background: none; }
+            .page { margin: 0; box-shadow: none; border: none; width: 100%; height: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page">
+    <!-- <div class="corner-shape"></div> -->
+    
+    <div class="header">
+        <img src="picture1.png" alt="DOT INK LOGO" class="logo-img">
+        <div class="company-details">
+            <div class="company-name">DOT INK (PVT) LTD</div>
+            <div>218/13A, Ranimadama, Enderamulla, Wattala.</div>
+            <div>Hotline: 075 966 166 8 | General: 011 368 780</div>
+            <div>Email: info@dotink.lk | www.dotink.lk</div>
+            <div>VAT No: 178769677 - 7000</div>
+        </div>
+    </div>
+
+    <div class="quote-title-bar">
+        <h1>QUOTATION</h1>
+        <!-- <span>FOR DELL INSPIRON 3030 i3 14 GEN DESKTOP</span> -->
+    </div>
+
+    <table class="info-grid">
+        <tr>
+            <td class="label">Attention</td>
+            <td class="colon">:</td>
+            <td class="value"><strong>Mr. Supun Nirman</strong></td>
+            <td class="label">Quotation No</td>
+            <td class="colon">:</td>
+            <td class="value" id="qtNo" style="font-weight: bold; color: var(--dot-blue);">DI/QT/2026/001</td>
+        </tr>
+        <tr>
+            <td class="label">Organization</td>
+            <td class="colon">:</td>
+            <td class="value">Lanka Tiles - IT</td>
+            <td class="label">Date</td>
+            <td class="colon">:</td>
+            <td class="value">January 8, 2026</td>
+        </tr>
+        <tr>
+            <td class="label">Address</td>
+            <td class="colon">:</td>
+            <td class="value">Lanka Tiles 215, Nawala Road,</td>
+            <td class="label">Time</td>
+            <td class="colon">:</td>
+            <td class="value">4:22 PM</td>
+        </tr>
+        <tr>
+            <td class="label">Contact No</td>
+            <td class="colon">:</td>
+            <td class="value">114 526 700</td>
+            <td class="label">Email</td>
+            <td class="colon">:</td>
+            <td class="value">supun@lankatiles.com</td>
+        </tr>
+    </table>
+
+     <!-- NEW TABLE ADDED HERE -->
+    <table class="terms-summary-table">
+        <thead>
+            <tr>
+                <th>DELIVERY</th>
+                <th>VALIDITY</th>
+                <th>PAYMENTS</th>
+                <th>STOCKS AVAILABILITY</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Within 2 Days after Confirmation</td>
+                <td>100 Days</td>
+                <td>30 Days Credit / COD</td>
+                <td>Available</td>
+            </tr>
+        </tbody>
+    </table>
+
+
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th>MODEL / SPECIFICATION</th>
+                <th>WARRANTY</th>
+                <th>QTY</th>
+                <th>UNIT PRICE</th>
+                <th>VAT 18%</th>
+                <th>LINE TOTAL</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <strong>DELL INSPIRON 3030 i3 14 GEN DESKTOP</strong>
+                    <ul class="spec-list">
+                        <li>Intel Core i3 – 14100 14GEN Processor</li>
+                        <li>512GB M.2 PCIe NVMe SSD</li>
+                        <li>8GB DDR5 5600 MHz RAM</li>
+                        <li>Dell 24 Monitor SE2425HM 23.8-inch Full HD</li>
+                        <li>Dell Optical Mouse MS116 & Dell KB216 USB Keyboard</li>
+                        <li class="win-genuine">WINDOWS 11 PRO GENUINE</li>
+                    </ul>
+                </td>
+                <td style="font-size: 11px; text-align: center; vertical-align: middle;">
+                    ON SITE SUPPORT<br>03 YEARS HARDWARE<br>&<br>03 YEARS SERVICE
+                </td>
+                <td class="text-center">1</td>
+                <td class="text-right">100.00</td>
+                <td class="text-right">18.00</td>
+                <td class="text-right">118.00</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="totals-section">
+        <div class="in-words">
+            <strong>In words:</strong><br>
+            One Hundred Eighteen Rupees Only
+        </div>
+        <table class="amounts-table">
+            <tr>
+                <td><strong>Sub Total</strong></td>
+                <td class="text-right"><strong>100.00</strong></td>
+            </tr>
+            <tr>
+                <td>VAT (18%)</td>
+                <td class="text-right">18.00</td>
+            </tr>
+            <tr class="grand-total">
+                <td><strong>GRAND TOTAL</strong></td>
+                <td class="text-right"><strong>118.00</strong></td>
+            </tr>
+        </table>
+    </div>
+
+   
+
+    <div class="special-note">
+        <div class="special-note-header">SPECIAL NOTES</div>
+        <div class="special-note-body">
+            <div>✓ Price is negotiable after discussions.</div>
+            <div>✓ On-site support is included.</div>
+            <div>✓ One to one replacement warranty for manufacture faults only for Toners and Ribbons.</div>
+            <div>✓ CHEQUE SHOULD BE DRAWN IN FAVOR OF <span class="highlight-yellow">"DOT INK (PVT) LTD"</span>.</div>
+        </div>
+    </div>
+
+    <div class="footer-info">
+        <div>
+            <strong>For Sales and Technical Inquiries:</strong><br>
+            <span style="color: var(--dot-blue); text-decoration: underline; font-size: 14px;">M.ASHAN</span><br>
+            Executive - Operation Management<br>
+            Mobile: 075 966 166 8
+        </div>
+    </div>
+<!--     
+    <div class="signature-grid">
+        <div class="sig-box">Authorized Signature<br>DOT INK (PVT) LTD</div>
+        <div class="sig-box">Signature & Stamp<br>Customer</div>
+    </div> -->
+
+    <div class="copyright-footer">
+        © DOT INK (PVT) LTD ●●● This Document is Copyrights to DOT INK (PVT) LTD
+    </div>
+</div>
+
+<script>
+    function generateQuotationNo() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const randomID = Math.floor(1000 + Math.random() * 9000); 
+        document.getElementById('qtNo').innerText = `DI/QT/${year}/${month}/${randomID}`;
+    }
+    window.onload = generateQuotationNo;
+</script>
+
+</body>
+</html>
