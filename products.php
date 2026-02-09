@@ -1,3 +1,4 @@
+
 <?php
 session_start();
 require_once 'config/db.php';
@@ -12,8 +13,8 @@ if (isset($_GET['delete'])) {
     redirect('products.php');
 }
 
-// Fetch all products
-$stmt = $pdo->prepare("SELECT * FROM products ORDER BY item_name ASC");
+// Fetch all products - FIXED: use product_name instead of item_name
+$stmt = $pdo->prepare("SELECT * FROM products ORDER BY product_name ASC");
 $stmt->execute();
 $products = $stmt->fetchAll();
 ?>
@@ -63,15 +64,27 @@ $products = $stmt->fetchAll();
             <main class="col-md-10 ms-sm-auto px-md-4">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h1 class="h2">Products</h1>
+                    <a href="add_product.php" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Add Product
+                    </a>
                 </div>
 
                 <?php displayFlashMessage(); ?>
 
+                <!-- Search Bar -->
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <input type="text" id="searchProduct" class="form-control" 
+                               placeholder="Search by Product ID or Name...">
+                    </div>
+                </div>
+
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover">
+                    <table class="table table-striped table-hover" id="productsTable">
                         <thead class="table-dark">
                             <tr>
                                 <th>#</th>
+                                <th>Product ID</th>
                                 <th>Product Name</th>
                                 <th>Description</th>
                                 <th>Warranty</th>
@@ -84,35 +97,82 @@ $products = $stmt->fetchAll();
                                 <?php foreach ($products as $index => $product): ?>
                                     <tr>
                                         <td><?= $index + 1 ?></td>
-                                        <td><strong><?= htmlspecialchars($product['item_name']) ?></strong></td>
                                         <td>
-                                            <small><?= nl2br(htmlspecialchars(substr($product['item_description'] ?? '', 0, 100))) ?></small>
+                                            <span class="badge bg-secondary">
+                                                <?= htmlspecialchars($product['product_id']) ?>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <strong><?= htmlspecialchars($product['product_name']) ?></strong>
+                                        </td>
+                                        <td>
+                                            <small><?= nl2br(htmlspecialchars(substr($product['product_description'] ?? '', 0, 100))) ?></small>
+                                            <?php if (strlen($product['product_description'] ?? '') > 100): ?>
+                                                <small class="text-muted">...</small>
+                                            <?php endif; ?>
                                         </td>
                                         <td><?= htmlspecialchars($product['warranty'] ?? '-') ?></td>
-                                        <td><strong>Rs. <?= number_format($product['unit_price'], 2) ?></strong></td>
                                         <td>
-                                            <a href="products.php?delete=<?= $product['id'] ?>" 
-                                               class="btn btn-sm btn-danger" 
-                                               onclick="return confirm('Are you sure?')">
-                                                <i class="bi bi-trash"></i>
-                                            </a>
+                                            <strong>Rs. <?= number_format($product['unit_price'], 2) ?></strong>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="edit_product.php?id=<?= $product['id'] ?>" 
+                                                   class="btn btn-outline-primary" title="Edit">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <a href="products.php?delete=<?= $product['id'] ?>" 
+                                                   class="btn btn-outline-danger" 
+                                                   onclick="return confirm('Are you sure you want to delete this product?')"
+                                                   title="Delete">
+                                                    <i class="bi bi-trash"></i>
+                                                </a>
+                                            </div>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="6" class="text-center py-4">
-                                        <p>No products found. Products will be added automatically when you create quotations.</p>
+                                    <td colspan="7" class="text-center py-4">
+                                        <i class="bi bi-box display-4 text-muted"></i>
+                                        <p class="mt-2">No products found.</p>
+                                        <a href="add_product.php" class="btn btn-primary btn-sm">
+                                            <i class="bi bi-plus-circle"></i> Add First Product
+                                        </a>
                                     </td>
                                 </tr>
                             <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
+
+                <!-- Product Count -->
+                <div class="text-muted mb-3">
+                    Total Products: <strong><?= count($products) ?></strong>
+                </div>
             </main>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Live Search Script -->
+    <script>
+    document.getElementById('searchProduct').addEventListener('keyup', function() {
+        const filter = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#productsTable tbody tr');
+        
+        rows.forEach(function(row) {
+            const productId = row.cells[1] ? row.cells[1].textContent.toLowerCase() : '';
+            const productName = row.cells[2] ? row.cells[2].textContent.toLowerCase() : '';
+            
+            if (productId.includes(filter) || productName.includes(filter)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+    </script>
 </body>
 </html>

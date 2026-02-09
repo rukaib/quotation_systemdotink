@@ -792,7 +792,7 @@ while ($currentPage <= $totalPages):
                                     <tr>
                                         <td>VAT (18%)</td>
                                         <td class="txt-r">Rs. <?= number_format($quotation['tax_amount'], 2) ?></td>
-                                    </tr>
+                                    </tr>   
                                 <?php endif; ?>
                                 <tr class="total-row">
                                     <td><strong>GRAND TOTAL</strong></td>
